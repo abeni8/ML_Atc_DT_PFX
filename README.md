@@ -31,7 +31,7 @@ Below is a list of excel files along with a brief description of the tabs associ
 3.	all_ttest_results.xlsx:
   a.	DT vs DT/PathFX: paired t-test table comparing the performance of DT vs DT/PathFX model
   b.	DT/ATC vs DT/ATC/PathFX: paired t-test table comparing the performance of DT/ATC vs DT/ATC/PathFX model
-  c.	ATC effects: 3 paired t-test tables comparing the performance of: 1) ATC vs DT model, 2) DT vs DT/ATC model, and 3) DT/PathFX vs
+  c.	ATC effects: 3 paired t-test tables comparing the performance of: 1) ATC vs DT model, 2) DT vs DT/ATC model, and 3) DT/PathFX vs DT/ATC/PathFX model
 
 
 
