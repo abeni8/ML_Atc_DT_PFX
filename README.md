@@ -12,7 +12,7 @@ Repository for "Drug target, class level, and PathFX pathway information share u
 3. https://go.drugbank.com/releases/latest#open-data
    a. drugbank_vocabulary.csv: a curated list of all common names and synonyms associated with drugs in DrugBank
 4. https://go.drugbank.com/releases
-   a. DrugBank release version 5.1.6
+   a. Drugbank050120.xlsx which includes data from DrugBank release version 5.1.6, that was parsed reading using this notebook as a guide: https://github.com/dhimmel/drugbank/blob/gh-pages/parse.ipynb
 
 
 **Below is a list of excel files along with a brief description of the tabs associated with each excel file**
