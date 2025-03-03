@@ -317,36 +317,38 @@ print(t_test_result)
 
 
 ```{r}
-
-# FIGURE 6A and B
+# Load the necessary libraries
+library(ggplot2)
+library(dplyr)
+library(readxl)
 
 # Load the first Excel file
 file_path_1 <- 'LR_tar_approved.xlsx'
 data_1 <- read_excel(file_path_1)
-data_1 <- data_1[,2:31]
-
+data_1 <- data_1[, 2:31]
 
 # Load the second Excel file
 file_path_2 <- 'LR_tar_approved_tuned.xlsx'  # Update with the correct second file path
 data_2 <- read_excel(file_path_2)
-data_2 <- data_2[,2:31]
-
+data_2 <- data_2[, 2:31]
 
 # Calculate the mean for each side effect (column) in data_1
 mean_data_1 <- colMeans(data_1, na.rm = TRUE)
+
+# Calculate the mean for each side effect (column) in data_2
+mean_data_2 <- colMeans(data_2, na.rm = TRUE)
+
+# Perform a t-test for the means of the untuned vs tuned
+t_test_results <- t.test(mean_data_1, mean_data_2)
+print(t_test_results)
 
 # Create a data frame for the first file with side effects and their corresponding mean values
 side_effects_1 <- colnames(data_1)  # Assuming the column names represent the side effects
 mean_data_1_df <- data.frame(Side_Effect = side_effects_1, Mean_Value = mean_data_1)
 
-# Calculate the mean for each side effect (column) in data_2
-mean_data_2 <- colMeans(data_2, na.rm = TRUE)
-
 # Create a data frame for the second file with side effects and their corresponding mean values
 side_effects_2 <- colnames(data_2)  # Assuming the column names represent the side effects
 mean_data_2_df <- data.frame(Side_Effect = side_effects_2, Mean_Value = mean_data_2)
-
-
 
 # Calculate the mean differences between the two files
 mean_differences <- mean_data_2 - mean_data_1
@@ -357,8 +359,6 @@ results <- data.frame(
   Mean_Difference = mean_differences
 )
 
-
-
 # Sort by mean difference
 results_sorted <- results %>% arrange(desc(Mean_Difference))
 
@@ -366,8 +366,6 @@ results_sorted <- results %>% arrange(desc(Mean_Difference))
 top_results <- head(results_sorted, 30)
 
 # Create the plot using ggplot2
-library(ggplot2)
-
 ggplot(top_results, aes(x = reorder(Side_Effect, Mean_Difference), y = Mean_Difference, fill = Mean_Difference)) +
   geom_bar(stat = 'identity', show.legend = FALSE) +
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
@@ -384,8 +382,6 @@ ggplot(top_results, aes(x = reorder(Side_Effect, Mean_Difference), y = Mean_Diff
     axis.title = element_text(face = "bold", size = 12)
   ) +
   coord_flip() # Flip the coordinates for better readability
-
-
 ```
 
 ```{r}
