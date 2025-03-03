@@ -15,6 +15,7 @@ library(GGally)
 library(RColorBrewer)
 library(dplyr)
 library(car)
+library(ggridges)
 
 
 
@@ -312,3 +313,143 @@ print(levene_test)
 print(t_test_result)
 
 ```
+
+
+
+```{r}
+
+# FIGURE 6A and B
+
+# Load the first Excel file
+file_path_1 <- 'LR_tar_approved.xlsx'
+data_1 <- read_excel(file_path_1)
+data_1 <- data_1[,2:31]
+
+
+# Load the second Excel file
+file_path_2 <- 'LR_tar_approved_tuned.xlsx'  # Update with the correct second file path
+data_2 <- read_excel(file_path_2)
+data_2 <- data_2[,2:31]
+
+
+# Calculate the mean for each side effect (column) in data_1
+mean_data_1 <- colMeans(data_1, na.rm = TRUE)
+
+# Create a data frame for the first file with side effects and their corresponding mean values
+side_effects_1 <- colnames(data_1)  # Assuming the column names represent the side effects
+mean_data_1_df <- data.frame(Side_Effect = side_effects_1, Mean_Value = mean_data_1)
+
+# Calculate the mean for each side effect (column) in data_2
+mean_data_2 <- colMeans(data_2, na.rm = TRUE)
+
+# Create a data frame for the second file with side effects and their corresponding mean values
+side_effects_2 <- colnames(data_2)  # Assuming the column names represent the side effects
+mean_data_2_df <- data.frame(Side_Effect = side_effects_2, Mean_Value = mean_data_2)
+
+
+
+# Calculate the mean differences between the two files
+mean_differences <- mean_data_2 - mean_data_1
+
+# Create a data frame with side effects and mean differences
+results <- data.frame(
+  Side_Effect = side_effects_1,  # Assuming side effects are the same across both files
+  Mean_Difference = mean_differences
+)
+
+
+
+# Sort by mean difference
+results_sorted <- results %>% arrange(desc(Mean_Difference))
+
+# Select the top 30 side effects
+top_results <- head(results_sorted, 30)
+
+# Create the plot using ggplot2
+library(ggplot2)
+
+ggplot(top_results, aes(x = reorder(Side_Effect, Mean_Difference), y = Mean_Difference, fill = Mean_Difference)) +
+  geom_bar(stat = 'identity', show.legend = FALSE) +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  labs(
+    title = "Mean Difference of Top 30 Side Effects (Approved Drugs)",
+    x = "Side Effect",
+    y = "Mean Difference (Tuned - Untuned)"
+  ) +
+  theme_minimal(base_size = 15) + 
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(face = "bold", size = 13, hjust = .3),
+    axis.text.y = element_text(size = 8),  # Smaller y-axis text size
+    axis.title = element_text(face = "bold", size = 12)
+  ) +
+  coord_flip() # Flip the coordinates for better readability
+
+
+```
+
+```{r}
+library(ggplot2)
+library(ggridges)
+library(reshape2)
+library(dplyr)
+library(readxl)
+
+# Load the first Excel file
+file_path_1 <- 'LR_tar_approved.xlsx'
+data_1 <- read_excel(file_path_1)[, 2:31]
+
+# Load the second Excel file
+file_path_2 <- 'LR_tar_approved_tuned.xlsx'
+data_2 <- read_excel(file_path_2)[, 2:31]
+
+# Calculate the mean for each side effect (column)
+mean_data_1 <- colMeans(data_1, na.rm = TRUE)
+mean_data_2 <- colMeans(data_2, na.rm = TRUE)
+
+# Create a dataframe with mean differences
+results <- data.frame(
+  Side_Effect = colnames(data_1),
+  Mean_Difference = mean_data_2 - mean_data_1
+)
+
+# Select the top 10 side effects with the **largest mean difference**
+top_results <- results %>% arrange(desc(Mean_Difference)) %>% head(10)
+
+# Melt data for plotting
+data_1_long <- melt(data_1)
+data_2_long <- melt(data_2)
+
+# Filter data to keep only the top 10 side effects
+data_1_filtered <- data_1_long %>% filter(variable %in% top_results$Side_Effect)
+data_2_filtered <- data_2_long %>% filter(variable %in% top_results$Side_Effect)
+
+# Reverse factor levels to make top side effects appear at the top
+data_1_filtered$variable <- factor(data_1_filtered$variable, levels = rev(top_results$Side_Effect))
+data_2_filtered$variable <- factor(data_2_filtered$variable, levels = rev(top_results$Side_Effect))
+
+# Custom color palette
+custom_colors <- c("Untuned" = "#537ec5", "Tuned" = "#d1495b")  # Deep blue & warm red
+
+# Plot with increased spacing between y-axis labels
+ggplot() +
+  geom_density_ridges(data = data_1_filtered, aes(x = value, y = variable, fill = "Untuned"), alpha = 0.5, scale = 1.2) +
+  geom_density_ridges(data = data_2_filtered, aes(x = value, y = variable, fill = "Tuned"), alpha = 0.5, scale = 1.2) +
+  scale_fill_manual(values = custom_colors) +
+  labs(
+    title = "Top 10 Side Effects: Performance After Tuning (Approved)",
+    x = "LR Model Performance",
+    y = "Side Effect"
+  ) +
+  theme_minimal(base_size = 15) +
+  theme(
+    legend.position = "top",
+    legend.title = element_blank(),
+    axis.text.y = element_text(size = 12, margin = margin(r = 10)),  # Increased spacing
+    plot.title = element_text(face = "bold", size = 12, hjust = 0),
+    axis.title = element_text(face = "bold", size = 12)  # Bold axis titles
+  )
+
+
+```
+
