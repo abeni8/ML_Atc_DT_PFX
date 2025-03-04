@@ -3,9 +3,12 @@ This is our repository for our project for C&S BIO 185 -- "Evaluating ML Models:
    - 'Repository for "Drug target, class level, and PathFX pathway information share utility for machine learning prediction of common drug-induced side effects" by Han Jie Liu & Jennifer L. Wilson...'
 
 **main_code.ipynb** is the Python script written by the original researchers.
+
 **main_code_modified.ipynb** is modified from the original script, cutting down parts that weren't relevant to our project as well as new code written for our extension.
+
 **main_code_tunedLR.ipynb** is another modified script that utilizes our fine tuned LR model.
-**Figure Generation/Figures.Rmd is an R markdown script used to generate all figures for our project.**
+**Figure Generation/Figures.Rmd** is an R markdown script used to generate all figures for our project.
+
 
 **Below is a list of link to the resources and datasets used from them to generate project results (original project)**
 1. http://sideeffects.embl.de/download/
