@@ -1,44 +1,204 @@
-# ML_Atc_DT_PFX
-This is our repository for our project for C&S BIO 185 -- "Evaluating ML Models: Predicting Drug Side Effects", an extension of:
-   - 'Repository for "Drug target, class level, and PathFX pathway information share utility for machine learning prediction of common drug-induced side effects" by Han Jie Liu & Jennifer L. Wilson...'
+# Evaluating and Optimizing Machine Learning Models to Predict Drug Side Effects
 
-**main_code.ipynb** is the Python script written by the original researchers.
+**Vyas Koduvayur · Jenna Jabourian · Melody Mao · Flicka Zhang · Abeni Liu**
 
-**main_code_modified.ipynb** is modified from the original script, cutting down parts that weren't relevant to our project as well as new code written for our extension.
+[View Research Paper](https://escholarship.org/uc/item/7343k6z4#main)
 
-**main_code_tunedLR.ipynb** is another modified script that utilizes our fine tuned LR model.
+---
 
-**Figure Generation/Figures.Rmd** is an R markdown script used to generate all figures for our project.
+## Overview
 
+Predicting drug side effects is an important challenge in pharmacology and drug development. Machine learning (ML) approaches can help identify patterns in large-scale drug and clinical datasets that may be difficult to detect using traditional methods.
 
-**Below is a list of link to the resources and datasets used from them to generate project results (original project)**
-1. http://sideeffects.embl.de/download/
-   a. meddra_all_se.tsv: contains all drug to side effect combinations curated in SIDER 4.1 based on MedDRA classification
-   b. drug_names.tsv: dataset containing all drug names and its unique drug ID in SIDER 4.1
-2. https://github.com/jenwilson521/PathFX/blob/master/rscs/Pfx050120_dint.pkl: consists of a pickled dictionary of all drugbank drugs with its associated targets
-3. https://go.drugbank.com/releases/latest#open-data
-   a. drugbank_vocabulary.csv: a curated list of all common names and synonyms associated with drugs in DrugBank
-4. https://go.drugbank.com/releases
-   a. Drugbank050120.xlsx which includes data from DrugBank release version 5.1.6, that was parsed reading using this notebook as a guide: https://github.com/dhimmel/drugbank/blob/gh-pages/parse.ipynb
+In this project, we extend previous work by Liu and Wilson that used machine learning models to predict common drug-induced side effects using domain knowledge features including:
 
+1. **Drug targets (DT)**
+2. **Anatomical Therapeutic Chemical (ATC) classification codes**
+3. **PathFX protein-protein interaction networks**
 
-**Other important data files that were generated in the original project**
-1.	Intermediate_Data/Characteristics.xlsx:
-  a.	data characteristics: contains 1) total count of side effects, 2) number of drugs associated with side effect, 3) number of drugs matched to DBID, 4) DBID match %, 5) matrix match count and 6) matrix match %
-  b.	LR vs RFC: comparison of LR and RFC model prediction across 30 side effects with 100x bootstrap with random undersample of negative cases
-  c.	average accuracy across 5 conditions: average accuracy of model performance for prediction of 30 side effects in 1) ATC model, 2) DT model, 3) DT/PathFX model, 4) DT/ATC model, and 5) DT/PathFX/ATC model
-  d.	ANOVA-RM: repeated measures ANOVA across the 5 conditions sorted based on the highest to lowest prediction accuracy from the DT model
+The original study found that Logistic Regression (LR) performed particularly well for side effect prediction, with models incorporating drug targets and level 2 ATC codes among the strongest-performing approaches.
 
-2.	Intermediate_Data/LR_Coefficients.xlsx:
-  a.	experimental drug target coefficients: count of the 10 most common unapproved drug target with its assigned LR coefficients across 30 side effects trained on the unfiltered dataset
-  b.	gastrointestinal disorder: top and bottom 30 LR coefficients for this side effect
-  c.	hypersensitivity: top and bottom 30 LR coefficients for this side effect
-  d.	dermatitis: top and bottom 30 LR coefficients for this side effect
+We investigated two extensions to the original work:
 
-3.	Intermediate_Data/all_ttest_results.xlsx:
-  a.	DT vs DT/PathFX: paired t-test table comparing the performance of DT vs DT/PathFX model
-  b.	DT/ATC vs DT/ATC/PathFX: paired t-test table comparing the performance of DT/ATC vs DT/ATC/PathFX model
-  c.	ATC effects: 3 paired t-test tables comparing the performance of: 1) ATC vs DT model, 2) DT vs DT/ATC model, and 3) DT/PathFX vs DT/ATC/PathFX model
+1. **ATC code granularity** — Does using more specific ATC classifications (levels 3–5) improve prediction accuracy?
+2. **Model optimization** — Can fine-tuning the Logistic Regression model improve its predictive performance?
 
+Our results suggest that increasing feature specificity does not necessarily improve model performance. ATC levels 2, 3, and 4 performed comparably, while level 5 substantially underperformed, likely due to overfitting. In contrast, fine-tuning the Logistic Regression model through decision-threshold optimization and regularization improved prediction accuracy across all 30 side effects examined. Notably, our fine-tuned model achieved higher predictive accuracy than the best-performing model reported in the original study, demonstrating that optimizing model parameters can improve performance even without introducing additional feature sets.
 
+Together, these findings highlight the importance of balancing feature granularity, model optimization, and generalizability when applying machine learning to drug side effect prediction.
 
+---
+
+## Research Questions
+
+Our analysis focused on two major questions:
+
+* Does increasing the specificity of ATC classification codes from levels 2 through 5 improve drug side effect prediction?
+* Can optimization of Logistic Regression parameters improve predictive accuracy beyond the original model?
+
+---
+
+## Methods & Analysis
+
+The repository contains the code, datasets, intermediate results, and figure-generation scripts used for our analysis.
+
+### ATC Code Analysis
+
+We compared Logistic Regression models using **ATC levels 2, 3, 4, and 5** to determine how feature granularity affects predictive performance across the 30 most common drug-induced side effects.
+
+We used ANOVA and pairwise statistical comparisons to evaluate differences between ATC levels, with additional comparisons between levels 2 and 4.
+
+### Logistic Regression Optimization
+
+We fine-tuned the Logistic Regression model by adjusting:
+
+* **Decision threshold**, optimized using Youden's J statistic
+* **Regularization strength (`C`)**, optimized using grid search
+* **Maximum iterations**, increased to accommodate model convergence
+
+The optimized model was then applied to the **DT/ATC feature combination**, using level 4 ATC codes.
+
+### Code & Figures
+
+* **`main_code.ipynb`** — Python code from the original study.
+* **`main_code_modified.ipynb`** — Modified version of the original code, with sections not relevant to our project removed and new analysis added.
+* **`main_code_tunedLR.ipynb`** — Modified version incorporating our fine-tuned Logistic Regression model.
+* **`Figure Generation/Figures.Rmd`** — R Markdown script used to generate the figures presented in our project.
+
+---
+
+## Key Findings
+
+Our analyses identified several important patterns:
+
+* **ATC levels 2, 3, and 4 performed comparably**, suggesting that increasing ATC specificity does not necessarily improve predictive accuracy.
+* **ATC level 5 substantially underperformed** the other levels, likely because its greater specificity resulted in sparse features and increased overfitting.
+* **Level 2 and level 4 ATC models especially did not differ significantly** in overall prediction accuracy, both with and without drug-target features.
+* **Fine-tuning Logistic Regression improved accuracy across all 30 side effects.**
+* The fine-tuned model improved mean accuracy by approximately **0.0186** for the DT-only feature set.
+* The final fine-tuned **DT/ATC model using level 4 ATC codes** achieved a mean accuracy of **0.7016**.
+* Model optimization alone was able to outperform the original DT/ATC model for several individual side effects, demonstrating that **model optimization can be as important as adding additional domain-knowledge features**.
+
+Overall, our results demonstrate a tradeoff between **feature specificity and model generalizability**, while showing that careful parameter optimization can improve drug side effect prediction.
+
+---
+
+## Data & Resources
+
+### Original Study
+
+This project extends the work of Liu and Wilson:
+
+> *"Drug target, class level, and PathFX pathway information share utility for machine learning prediction of common drug-induced side effects."*
+
+The original study's code is available through the [original GitHub repository](https://github.com/jenwilson521/ML_Atc_DT_PFX).
+
+### Datasets Used
+
+The following datasets and resources were used to reproduce and extend the original analysis:
+
+1. **SIDER 4.1**
+
+   [SIDER Download](http://sideeffects.embl.de/download/)
+
+   * `meddra_all_se.tsv` — Contains drug-side effect associations curated using MedDRA classifications.
+   * `drug_names.tsv` — Contains drug names and their unique SIDER identifiers.
+
+2. **PathFX**
+
+   [PathFX Drug Target Data](https://github.com/jenwilson521/PathFX/blob/master/rscs/Pfx050120_dint.pkl)
+
+   * `Pfx050120_dint.pkl` — Pickled dictionary containing DrugBank drugs and their associated targets.
+
+3. **DrugBank Vocabulary**
+
+   [DrugBank Open Data](https://go.drugbank.com/releases/latest#open-data)
+
+   * `drugbank_vocabulary.csv` — Contains common drug names and synonyms associated with DrugBank identifiers.
+
+4. **DrugBank Release 5.1.6**
+
+   [DrugBank Releases](https://go.drugbank.com/releases)
+
+   * `Drugbank050120.xlsx` — Contains data from DrugBank release version 5.1.6 used to obtain ATC classifications.
+   * The data was parsed following the approach described in [this notebook](https://github.com/dhimmel/drugbank/blob/gh-pages/parse.ipynb).
+
+---
+
+## Intermediate Data
+
+The repository also contains several Excel files containing processed data and statistical results from the original study and our extensions.
+
+### `Intermediate_Data/Characteristics.xlsx`
+
+Contains:
+
+* **Data characteristics** — Counts of side effects, associated drugs, DrugBank ID matches, and matrix matches.
+* **LR vs. RFC** — Comparison of Logistic Regression and Random Forest Classifier predictions across 30 side effects using 100× bootstrap sampling with random undersampling of negative cases.
+* **Average accuracy across feature combinations** — Model performance for:
+
+  1. ATC
+  2. DT
+  3. DT/PathFX
+  4. DT/ATC
+  5. DT/PathFX/ATC
+* **ANOVA-RM** — Repeated-measures ANOVA comparing the five feature combinations.
+
+### `Intermediate_Data/LR_Coefficients.xlsx`
+
+Contains Logistic Regression coefficient analyses, including:
+
+* Coefficients for the 10 most common unapproved drug targets across 30 side effects.
+* Top and bottom 30 coefficients for **gastrointestinal disorder**.
+* Top and bottom 30 coefficients for **hypersensitivity**.
+* Top and bottom 30 coefficients for **dermatitis**.
+
+### `Intermediate_Data/all_ttest_results.xlsx`
+
+Contains paired t-test results comparing model performance, including:
+
+* **DT vs. DT/PathFX**
+* **DT/ATC vs. DT/ATC/PathFX**
+* **ATC vs. DT**
+* **DT vs. DT/ATC**
+* **DT/PathFX vs. DT/ATC/PathFX**
+
+---
+
+## Project Recognition
+
+This project was conducted as part of **C&S BIO M185: Thesis Research Opportunities in Computational and Systems Biology** at the **University of California, Los Angeles (UCLA)**.
+
+The project was subsequently submitted to the **2025–2026 UCLA Library Prize for Undergraduate Research**, where it received **2nd Place in Science, Technology, Engineering & Mathematics (STEM)**.
+
+As part of the library prize, the project is now available as an open-access publication through eScholarship, the University of California's open-access publishing platform.
+
+**[UCLA Library Prize / eScholarship Publication](SCHOLARSHIP_LINK_HERE)**
+
+---
+
+## Research Outputs
+
+* **Research Paper:** [View Paper](PAPER_LINK_HERE)
+* **Poster:** [View Poster](POSTER_LINK_HERE)
+* **eScholarship Publication:** [View Publication](https://escholarship.org/uc/item/7343k6z4#main)
+
+---
+
+## Team
+
+- Vyas Koduvayur
+- Jenna Jabourian
+- Melody Mao
+- Flicka Zhang
+- Abeni Liu
+
+All team members contributed to **brainstorming, analysis, and writing**.
+
+---
+
+## Acknowledgements
+
+We would like to thank **Dr. Brian Nadel** for his guidance and support throughout the development of this project in C&S BIO M185 at UCLA.
+
+We also thank **Liu and Wilson** for providing the foundational study and computational framework on which this project was built.
