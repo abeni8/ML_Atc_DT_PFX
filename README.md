@@ -177,14 +177,6 @@ As part of the library prize, the project is now available as an open-access pub
 
 ---
 
-## Research Outputs
-
-* **Research Paper:** [View Paper](PAPER_LINK_HERE)
-* **Poster:** [View Poster](POSTER_LINK_HERE)
-* **eScholarship Publication:** [View Publication](https://escholarship.org/uc/item/7343k6z4#main)
-
----
-
 ## Team
 
 - Vyas Koduvayur
