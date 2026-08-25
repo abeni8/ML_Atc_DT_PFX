@@ -16,7 +16,7 @@ In this project, we extend previous work by Liu and Wilson that used machine lea
 2. **Anatomical Therapeutic Chemical (ATC) classification codes**
 3. **PathFX protein-protein interaction networks**
 
-The original study found that Logistic Regression (LR) performed particularly well for side effect prediction, with models incorporating drug targets and level 2 ATC codes among the strongest-performing approaches.
+The original study found that Logistic Regression (LR) performed particularly well for side effect prediction, with models incorporating drug targets and level 2 ATC codes as the strongest-performing feature sets.
 
 We investigated two extensions to the original work:
 
